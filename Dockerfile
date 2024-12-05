@@ -7,6 +7,6 @@ COPY app /app/
 RUN apt-get update && apt-get install -y curl
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["bentoml", "serve", "service:BuildingPredictorService"]
+CMD ["bentoml", "serve", "service:BuildingPredictorService", "--port", "8080"]

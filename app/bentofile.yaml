@@ -1,0 +1,19 @@
+# bentofile.yaml
+service: "service:svc"
+description: "Une service pour prédiction de consommation d'énergie de batîment non habitable"
+labels:
+  owner: guoleyang
+  project: building_emission_prediction
+include:
+  - "*.py"
+  - "model/*.model"
+  - "*.pipeline"
+  - "*.scaler"
+python:
+  packages:
+    - xgboost
+    - scikit-learn
+    - pandas
+    - numpy
+    - pydantic
+    - cloudpickle

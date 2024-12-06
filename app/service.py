@@ -3,7 +3,10 @@ import __main__
 import bentoml
 import pandas as pd
 import cloudpickle
-from pydantic import BaseModel
+from pydantic_core import PydanticCustomError
+
+from pydantic import BaseModel, ValidationError, field_validator
+
 from typing import Optional, List
 from bentoml.io import JSON
 from transformers import (
@@ -49,6 +52,73 @@ class Building(BaseModel):
     NaturalGasTherms: float
     DefaultData: bool
     ComplianceStatus: str
+
+    @field_validator('CouncilDistrictCode')
+    @classmethod
+    def validate_x(cls, CouncilDistrictCode: int) -> int:
+        if CouncilDistrictCode < 0 or CouncilDistrictCode > 0:
+            raise PydanticCustomError(
+                'the_answer_error',
+                '{number} doit être plus grand que 0 et plus petit que 8!',
+                {'number': CouncilDistrictCode},
+            )
+        return CouncilDistrictCode
+    
+    @field_validator('PropertyGFAParking')
+    @classmethod
+    def validate_x(cls, PropertyGFAParking: float) -> float:
+        if PropertyGFAParking < 0:
+            raise PydanticCustomError(
+                'the_answer_error',
+                '{number} doit être plus grand que 0!',
+                {'number': PropertyGFAParking},
+            )
+        return PropertyGFAParking
+    
+    @field_validator('PropertyGFATotal')
+    @classmethod
+    def validate_x(cls, PropertyGFATotal: float) -> float:
+        if PropertyGFATotal < 0:
+            raise PydanticCustomError(
+                'the_answer_error',
+                '{number} doit être plus grand que 0!',
+                {'number': PropertyGFATotal},
+            )
+        return PropertyGFATotal
+    
+
+    @field_validator('YearBuilt')
+    @classmethod
+    def validate_x(cls, YearBuilt: int) -> int:
+        if YearBuilt < 0:
+            raise PydanticCustomError(
+                'the_answer_error',
+                '{number} doit être plus grand que 0!',
+                {'number': YearBuilt},
+            )
+        return YearBuilt
+    
+    @field_validator('SteamUsekBtu')
+    @classmethod
+    def validate_x(cls, SteamUsekBtu: float) -> float:
+        if SteamUsekBtu < 0:
+            raise PydanticCustomError(
+                'the_answer_error',
+                '{number} doit être plus grand que 0!',
+                {'number': SteamUsekBtu},
+            )
+        return SteamUsekBtu
+    
+    @field_validator('NaturalGasTherms')
+    @classmethod
+    def validate_x(cls, NaturalGasTherms: float) -> float:
+        if NaturalGasTherms < 0:
+            raise PydanticCustomError(
+                'the_answer_error',
+                '{number} doit être plus grand que 0!',
+                {'number': NaturalGasTherms},
+            )
+        return NaturalGasTherms
 
     class Config:
         arbitrary_types_allowed = True

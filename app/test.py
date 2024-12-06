@@ -1,11 +1,8 @@
 import os
 import bentoml
 import unittest
-import time
-import requests
 from service import BuildingList
 
-HOST = os.getenv("HOST")
 
 EXAMPLE_INPUT = {
     "DataYear": 2016, 
@@ -21,7 +18,7 @@ EXAMPLE_INPUT = {
     "NumberofFloors": 11,
     "PropertyGFATotal": 299070.0,
     "PropertyGFAParking": 68432.0,
-    "ListOfAllPropertyUseTypes": "Other",
+    # "ListOfAllPropertyUseTypes": "Other",
     "LargestPropertyUseType": "Other",
     "SteamUsekBtu": 0.0,
     "NaturalGasTherms": 346853.3125,
@@ -33,7 +30,7 @@ EXAMPLE_INPUT = {
 class TestConnection(unittest.TestCase):
     def setUp(self):
         """Configuration initiale avant chaque test"""
-        self.uri = os.getenv('API_URI', 'http://localhost:3000')
+        self.uri = os.getenv('http://localhost:3000')
 
     
     def test_prediction_single(self):

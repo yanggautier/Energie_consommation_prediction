@@ -43,7 +43,7 @@ class Building(BaseModel):
     NumberofFloors: int
     PropertyGFATotal: float
     PropertyGFAParking: float
-    ListOfAllPropertyUseTypes: str
+    # ListOfAllPropertyUseTypes: str
     LargestPropertyUseType: str
     SteamUsekBtu: float
     NaturalGasTherms: float

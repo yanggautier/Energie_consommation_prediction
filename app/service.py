@@ -46,12 +46,8 @@ class Building(BaseModel):
     NumberofFloors: int
     PropertyGFATotal: float
     PropertyGFAParking: float
-    # ListOfAllPropertyUseTypes: str
+    ListOfAllPropertyUseTypes: str
     LargestPropertyUseType: str
-    SteamUsekBtu: float
-    NaturalGasTherms: float
-    DefaultData: bool
-    ComplianceStatus: str
 
     @field_validator('CouncilDistrictCode')
     @classmethod
@@ -98,27 +94,6 @@ class Building(BaseModel):
             )
         return YearBuilt
     
-    @field_validator('SteamUsekBtu')
-    @classmethod
-    def validate_x(cls, SteamUsekBtu: float) -> float:
-        if SteamUsekBtu < 0:
-            raise PydanticCustomError(
-                'the_answer_error',
-                '{number} doit être plus grand que 0!',
-                {'number': SteamUsekBtu},
-            )
-        return SteamUsekBtu
-    
-    @field_validator('NaturalGasTherms')
-    @classmethod
-    def validate_x(cls, NaturalGasTherms: float) -> float:
-        if NaturalGasTherms < 0:
-            raise PydanticCustomError(
-                'the_answer_error',
-                '{number} doit être plus grand que 0!',
-                {'number': NaturalGasTherms},
-            )
-        return NaturalGasTherms
 
     class Config:
         arbitrary_types_allowed = True
@@ -135,25 +110,40 @@ class BuildingList(BaseModel):
 class BuildingPredictorService:
     def __init__(self):
         # Lire les fichiers de modèle, pipeline, et standarscaler dans les attributs
-        self.model = pd.read_pickle("model/xgb.model")
         self.pipeline = load_pipeline("preprocessing.pipeline")
-        self.scaler_y = pd.read_pickle("y.scaler")
+
+        self.model_energy = pd.read_pickle("model/lasso_energy.model")
+        self.model_ges = pd.read_pickle("model/lasso_ges.model")
+        
+        self.y_scaler_energy = pd.read_pickle("scaler/y_energy.scaler")
+        self.y_scaler_ges = pd.read_pickle("scaler/y_ges.scaler")
 
     @bentoml.api
     def predict_single(self, input_data: Building) -> dict:
-        try:
-            # Transformer le données de requête en Pandas DataFrame
-            building_dict = input_data.model_dump()
-            building_df = pd.DataFrame([building_dict])
-            transformed_data = self.pipeline.transform(building_df)
+        #try:
+        # Transformer le données de requête en Pandas DataFrame
 
-            # Prédiction de données
-            result = self.model.predict(transformed_data)
-            final_result = float(self.scaler_y.inverse_transform(result.reshape(-1, 1)).flatten()[0])
+        building_dict = input_data.model_dump()
+        building_df = pd.DataFrame([building_dict])
+        
+        transformed_data = self.pipeline.transform(building_df)
 
-            return {"prediction": final_result, "status_code": 200}
-        except Exception as e:
-            return {"error": str(e), "status_code": 500}
+        # Prédiction de consommation d'énergie 
+        energy_use_scaled = self.model_energy.predict(transformed_data)
+        energy_use_final = round(float(self.y_scaler_energy.inverse_transform(energy_use_scaled.reshape(-1, 1)).flatten()[0]), 2)
+
+        # Prédiction d'émission d'effet de serre
+        total_ges_scaled = self.model_ges.predict(transformed_data)
+        total_ges_final = round(float(self.y_scaler_ges.inverse_transform(total_ges_scaled.reshape(-1, 1)).flatten()[0]), 2)
+
+
+        return {"prediction": {
+                    "consommation d'énergie (kBtu)": energy_use_final,
+                    "émission d'effet de serre": total_ges_final
+                    }, 
+                "status_code": 200}
+        #except Exception as e:
+        #    return {"error": str(e), "status_code": 500}
 
     @bentoml.api
     def predict_list(self, input_data: BuildingList) -> dict:
@@ -165,14 +155,21 @@ class BuildingPredictorService:
             # Appliquer les transformations
             transformed_data = self.pipeline.transform(buildings_df)
 
-            # Prédiction pour tous les bâtiments
-            results = self.model.predict(transformed_data)
-            final_results = self.scaler_y.inverse_transform(results.reshape(-1, 1)).flatten()
+            # Prédiction de consommation d'énergie 
+            energy_use_scaled = self.model_energy.predict(transformed_data)
+            energy_use_final = self.y_scaler_energy.inverse_transform(energy_use_scaled.reshape(-1, 1)).flatten()
+
+            # Prédiction d'émission d'effet de serre
+            total_ges_scaled = self.model_ges.predict(transformed_data)
+            total_ges_final = self.y_scaler_ges.inverse_transform(total_ges_scaled.reshape(-1, 1)).flatten()
+
 
             # Créer un dictionnaire de résultats avec l'index du bâtiment comme clé
             predictions = {
-                f"building_{i}": float(pred)
-                for i, pred in enumerate(final_results)
+                f"building_{i}": {
+                    "consommation d'énergie (kBtu)": round(float(energy_use_final[i]), 2),
+                    "émission d'effet de serre": round(float(total_ges_final[i]),2)}
+                for i in range(len(buildings_df))
             }
 
             return {

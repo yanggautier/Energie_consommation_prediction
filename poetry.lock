@@ -301,6 +301,20 @@ triton = ["tritonclient (>=2.29.0)", "tritonclient[all]"]
 unsloth = ["bentoml-unsloth (>=0.1.0)"]
 
 [[package]]
+name = "branca"
+version = "0.8.0"
+description = "Generate complex HTML+JS pages with Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "branca-0.8.0-py3-none-any.whl", hash = "sha256:e78d5be39c8799a42e5c2dd1145a797a3cefc099537907bc1e4c43b6b55f7fa4"},
+    {file = "branca-0.8.0.tar.gz", hash = "sha256:1f8fd0d2f3b7548f2c146093932be5d3064ba21eee6cebf92d416b7f9092324f"},
+]
+
+[package.dependencies]
+jinja2 = ">=3"
+
+[[package]]
 name = "cattrs"
 version = "23.1.2"
 description = "Composable complex class support for attrs and dataclasses."
@@ -719,6 +733,27 @@ wrapt = ">=1.10,<2"
 
 [package.extras]
 dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "jinja2 (>=3.0.3,<3.1.0)", "setuptools", "sphinx (<2)", "tox"]
+
+[[package]]
+name = "folium"
+version = "0.18.0"
+description = "Make beautiful maps with Leaflet.js & Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "folium-0.18.0-py2.py3-none-any.whl", hash = "sha256:4e85f2b10166d5208bb65cdf4a072e239a923647dca4dee7c1d2dbe100af56b1"},
+    {file = "folium-0.18.0.tar.gz", hash = "sha256:39655dacb600fb1f614793575c5d352b90f28a7a9c9540ed6b7f46e43b428df8"},
+]
+
+[package.dependencies]
+branca = ">=0.6.0"
+jinja2 = ">=2.9"
+numpy = "*"
+requests = "*"
+xyzservices = "*"
+
+[package.extras]
+testing = ["pytest"]
 
 [[package]]
 name = "fonttools"
@@ -2928,6 +2963,17 @@ pyspark = ["cloudpickle", "pyspark", "scikit-learn"]
 scikit-learn = ["scikit-learn"]
 
 [[package]]
+name = "xyzservices"
+version = "2024.9.0"
+description = "Source of XYZ tiles providers"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "xyzservices-2024.9.0-py3-none-any.whl", hash = "sha256:776ae82b78d6e5ca63dd6a94abb054df8130887a4a308473b54a6bd364de8644"},
+    {file = "xyzservices-2024.9.0.tar.gz", hash = "sha256:68fb8353c9dbba4f1ff6c0f2e5e4e596bb9e1db7f94f4f7dfbcb26e25aa66fde"},
+]
+
+[[package]]
 name = "yarl"
 version = "1.18.3"
 description = "Yet another URL library"
@@ -3045,4 +3091,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "280595a285d97b6122e3ebb818c9a5593b6644569e6d012a99c5ca4ebd2eddfd"
+content-hash = "aa7600142387e32a152ecee25b73cbbb974d5ee0825a2bc2266ced814f827d3f"

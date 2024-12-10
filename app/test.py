@@ -18,12 +18,8 @@ EXAMPLE_INPUT = {
     "NumberofFloors": 11,
     "PropertyGFATotal": 299070.0,
     "PropertyGFAParking": 68432.0,
-    # "ListOfAllPropertyUseTypes": "Other",
-    "LargestPropertyUseType": "Other",
-    "SteamUsekBtu": 0.0,
-    "NaturalGasTherms": 346853.3125,
-    "DefaultData": False,
-    "ComplianceStatus": "Compliant"
+    "ListOfAllPropertyUseTypes": "Other",
+    "LargestPropertyUseType": "Other"
 }
 
 

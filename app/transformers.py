@@ -28,6 +28,7 @@ class DistrictDensityTransformer(BaseEstimator, TransformerMixin):
         X_copy = X.copy()
         X_copy['DistrictDensity'] = X_copy['CouncilDistrictCode'].map(self.district_density)
         return X_copy
+    
 
 class FeatureEngineeringTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
@@ -36,9 +37,9 @@ class FeatureEngineeringTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X):
         X_copy = X.copy()
         X_copy["BuildingAge"] = X_copy["DataYear"] - X_copy["YearBuilt"]
-        X_copy['NumberofFloors'] = X_copy['NumberofFloors'].replace(0, 1)
-        X_copy["MeanFloorGFA"] = (X_copy["PropertyGFATotal"] / X_copy["NumberofFloors"]).round(2)
-        X_copy["RationParking"] = (X_copy["PropertyGFAParking"] / X_copy["PropertyGFATotal"]).round(2)
+        X_copy["GFAPerFloor"] = (X_copy["PropertyGFATotal"] / X_copy["NumberofFloors"]).round(2)
+        X_copy["GFAPerBuilding"] = (X_copy["PropertyGFATotal"] / X_copy["NumberofBuildings"]).round(2)
+        X_copy["ParkingGFARate"] = (X_copy["PropertyGFAParking"] / X_copy["PropertyGFATotal"]).round(2)
         return X_copy
 
 class TypeConversionTransformer(BaseEstimator, TransformerMixin):
@@ -69,6 +70,7 @@ class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
             columns=self.mlb.classes_,
             index=X_copy.index
         )
+        X_copy["TotalUseType"] = len(property_types)
         X_copy = X_copy.drop(["ListOfAllPropertyUseTypes"], axis=1)
         return pd.concat([X_copy, tags_encoded], axis=1)
 
